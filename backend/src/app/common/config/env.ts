@@ -6,6 +6,7 @@ import { z } from "zod";
  */
 const envSchema = z.object({
   PORT: z.string().optional().default("8080"),
+  DATABASE_URL: z.string().min(1),
 });
 
 /**

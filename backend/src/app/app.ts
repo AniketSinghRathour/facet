@@ -5,7 +5,7 @@ import cors from "cors";
 import { errorHandler } from "./common/middleware/errorHandler.js";
 
 /**
- * Creates and configures the Express application (§8).
+ * Creates and configures the Express application.
  */
 
 export function createApplication(): Express {
