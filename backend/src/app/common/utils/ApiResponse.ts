@@ -3,9 +3,6 @@ import type { Response } from "express";
 /**
  * Standardised API response helper — static methods that call
  * res.status().json() with a consistent { success, message, data } shape.
- *
- * Express-style: `res` is passed in, not returned.
- * Controllers call e.g. `ApiResponse.ok(res, "Event created", event)`.
  */
 export class ApiResponse {
   static ok<T>(res: Response, message: string, data?: T): void {
