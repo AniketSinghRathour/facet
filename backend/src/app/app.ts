@@ -2,6 +2,7 @@ import express from "express";
 import type { Express } from "express";
 import cors from "cors";
 import authRouter from "./modules/auth/auth.routes.js";
+import eventRouter from "./modules/events/event.routes.js";
 
 import { errorHandler } from "./common/middleware/errorHandler.js";
 
@@ -34,6 +35,9 @@ export function createApplication(): Express {
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
   });
+
+  // ── 6. Domain module routers ──
+  app.use("/api/events", eventRouter);
 
   // ── 7. Error handler ──
   app.use(errorHandler);
