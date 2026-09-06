@@ -3,7 +3,7 @@ import { requireAuth } from "../auth/auth.middleware.js";
 import { validate } from "../../common/middleware/validate.js";
 import { createEventSchema, eventIdParamSchema } from "./event.schema.js";
 import * as eventController from "./event.controller.js";
-// import * as photoController from "../photos/photo.controller.js";
+import * as photoController from "../photos/photo.controller.js";
 
 /**
  * Event routes — all require authentication.
@@ -23,11 +23,11 @@ router.get(
 );
 
 /** GET /api/events/:eventId/photos/public — unauthenticated, paginated INDEXED photos for attendee gallery */
-// router.get(
-//   "/:eventId/photos/public",
-//   validate(eventIdParamSchema, "params"),
-//   photoController.listPublic,
-// );
+router.get(
+  "/:eventId/photos/public",
+  validate(eventIdParamSchema, "params"),
+  photoController.listPublic,
+);
 
 // All remaining event routes require a logged-in user
 router.use(requireAuth);

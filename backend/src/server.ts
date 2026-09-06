@@ -7,7 +7,7 @@ import { createApplication } from "./app/app.js";
 /**
  * Entry point — creates the Express app and starts listening.
  
- * createServer wraps the Express app for a clean shutdown path, if needed later.
+ * createServer wraps the Express app for a clean shutdown path.
  */
 async function main() {
   try {

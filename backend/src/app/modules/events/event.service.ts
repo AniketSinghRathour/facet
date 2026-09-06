@@ -121,12 +121,12 @@ export async function deleteEvent(eventId: string, ownerId: string) {
 
   if (photos.length > 0) {
     // Dynamically import to avoid circular dependency
-    // const { deletePhotos } = await import("../photos/photo.service.js");
-    // const photoIds = photos.map(p => p.id);
+    const { deletePhotos } = await import("../photos/photo.service.js");
+    const photoIds = photos.map(p => p.id);
     
     // We chunk the deletes if it's huge, but deletePhotos handles arrays.
     // For production with >1000 photos, we'd need pagination inside deletePhotos.
-    // await deletePhotos(photoIds, ownerId);
+    await deletePhotos(photoIds, ownerId);
   }
 
   // 2. Delete the Rekognition Collection
