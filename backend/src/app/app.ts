@@ -5,6 +5,7 @@ import authRouter from "./modules/auth/auth.routes.js";
 import eventRouter from "./modules/events/event.routes.js";
 import photoRouter from "./modules/photos/photo.routes.js";
 import searchRouter from "./modules/search/search.routes.js";
+import webhookRouter from "./modules/webhooks/webhook.routes.js";
 
 import { errorHandler } from "./common/middleware/errorHandler.js";
 
@@ -25,6 +26,10 @@ export function createApplication(): Express {
   // Better-Auth manages its own body parsing; pre-parsed bodies
   // cause 404s or hung requests.
   app.use("/api/auth", authRouter);
+
+  // ── 3. Webhooks — mounted BEFORE json parser ──
+  // Webhooks need the raw body for signature verification.
+  app.use("/webhooks", express.raw({ type: "application/json" }), webhookRouter);
 
   // ── 4. Global JSON body parser for all remaining routes ──
   app.use(express.json({ limit: "50mb" }));
