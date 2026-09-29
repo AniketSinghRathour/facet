@@ -401,7 +401,7 @@ export default function EventDetailPage({ params }: PageProps) {
             <div className="flex gap-4 md:gap-6 items-end">
               <div className="relative h-20 w-20 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200 shadow-sm">
                 <Image
-                  src={event.coverImage || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1600"}
+                  src={event.coverImage || "/images/unsplash/event-cover-1.jpg"}
                   alt={event.name}
                   fill
                   sizes="128px"
