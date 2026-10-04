@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useAccountCapabilities } from "@/hooks/useAccountCapabilities";
 import { useState, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   const { isAuthenticated, isLoading } = useAccountCapabilities();
@@ -15,12 +16,13 @@ export function Hero() {
     setMounted(true);
   }, []);
 
+  // When logged in, "Get Started" takes them directly to their dashboard.
+  // When not logged in, redirects to login first with callbackUrl=/dashboard preserved.
+  const destination = "/dashboard";
   const ctaHref =
-    !mounted || isLoading
-      ? "#"
-      : isAuthenticated
-        ? "/dashboard/events/new"
-        : "/sign-up";
+    mounted && !isLoading && isAuthenticated
+      ? destination
+      : `/sign-in?callbackUrl=${destination}`;
 
   return (
     <section className="relative w-full h-[100vh] min-h-[600px] max-h-[1000px] bg-zinc-950 overflow-hidden">
@@ -60,10 +62,11 @@ export function Hero() {
               href={ctaHref}
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "rounded-full h-14 md:h-16 px-10 md:px-12 text-lg md:text-xl bg-white text-zinc-950 hover:bg-zinc-100 hover:scale-[1.02] transition-all duration-300 font-medium shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] shrink-0"
+                "group rounded-full h-14 md:h-16 px-10 md:px-12 text-lg md:text-xl bg-white text-zinc-950 hover:bg-zinc-100 hover:scale-[1.02] transition-all duration-300 font-medium shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] shrink-0 flex items-center justify-center gap-2"
               )}
             >
-              Start an Event
+              <span>Get Started</span>
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/join"

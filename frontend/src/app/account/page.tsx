@@ -1,16 +1,37 @@
 "use client";
 
 import { useSession } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, User, Mail } from "lucide-react";
+import { ArrowLeft, User, Mail, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function AccountSettingsPage() {
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isPending && !session) {
+      router.replace("/sign-in?callbackUrl=/account");
+    }
+  }, [session, isPending, router]);
+
+  if (isPending) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-[#FAF7F2]">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-700/70" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-[#FAF7F2] py-8">

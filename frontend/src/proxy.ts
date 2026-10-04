@@ -15,38 +15,40 @@ import { NextRequest, NextResponse } from "next/server";
  * server-side when the frontend calls the backend API.
  */
 
-const PROTECTED_PATHS = ["/dashboard"];
-const AUTH_PATHS = ["/sign-in", "/sign-up"];
+const PROTECTED_PATHS = ["/dashboard", "/account"];
 
-export default function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
 
-  // Check for Better-Auth session cookie
+  // Check for Better-Auth session cookie with non-empty value
   const sessionCookie =
     request.cookies.get("better-auth.session_token") ??
     request.cookies.get("__Secure-better-auth.session_token");
 
-  const isAuthenticated = !!sessionCookie;
+  const isAuthenticated = !!(sessionCookie?.value && sessionCookie.value.trim().length > 0);
 
-  // Redirect authenticated users away from auth pages
-  if (isAuthenticated && AUTH_PATHS.some((p) => pathname.startsWith(p))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // Redirect unauthenticated users away from protected pages
+  // Redirect unauthenticated users away from protected pages (/dashboard, /account)
   if (
     !isAuthenticated &&
-    PROTECTED_PATHS.some((p) => pathname.startsWith(p))
+    PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))
   ) {
     const signInUrl = new URL("/sign-in", request.url);
-    signInUrl.searchParams.set("callbackUrl", pathname);
+    const fullPath = pathname + search;
+    signInUrl.searchParams.set("callbackUrl", fullPath);
     return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();
 }
 
+export default proxy;
+
 export const config = {
-  // Run middleware on these paths only (skip static files, API routes, etc.)
-  matcher: ["/dashboard/:path*", "/sign-in", "/sign-up"],
+  // Run proxy middleware on protected paths only
+  matcher: [
+    "/dashboard",
+    "/dashboard/:path*",
+    "/account",
+    "/account/:path*",
+  ],
 };

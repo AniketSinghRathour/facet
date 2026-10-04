@@ -53,24 +53,23 @@ export function Navbar() {
           ) : isAuthenticated ? (
             <div className="flex items-center gap-4">
 
-              {isPhotographer ? (
-                <Link
-                  href="/dashboard"
-                  className={cn(
-                    "hidden md:inline-flex transition-colors text-sm font-medium mr-2",
-                    isHome 
-                      ? "text-white/80 hover:text-white drop-shadow-sm" 
-                      : pathname.startsWith("/dashboard") 
-                        ? "text-zinc-900 font-semibold" 
-                        : "text-zinc-500 hover:text-zinc-900"
-                  )}
-                >
-                  Dashboard
+              <Link
+                href="/dashboard"
+                className={cn(
+                  "hidden md:inline-flex transition-colors text-sm font-medium mr-2",
+                  isHome 
+                    ? "text-white/80 hover:text-white drop-shadow-sm" 
+                    : pathname.startsWith("/dashboard") 
+                      ? "text-zinc-900 font-semibold" 
+                      : "text-zinc-500 hover:text-zinc-900"
+                )}
+              >
+                Dashboard
+              </Link>
+              {!isPhotographer && (
+                <Link href="/dashboard/events/new" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "hidden sm:inline-flex border-zinc-300 hover:bg-zinc-100")}>
+                  Start an event
                 </Link>
-              ) : (
-                 <Link href="/dashboard/events/new" className={cn(buttonVariants({ variant: "outline" }), "hidden sm:inline-flex border-zinc-300 hover:bg-zinc-100")}>
-                    Start an event
-                 </Link>
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost" }), "relative h-8 w-8 rounded-full p-0")}>
@@ -92,12 +91,9 @@ export function Navbar() {
                   <DropdownMenuItem onClick={() => router.push("/account")} className="cursor-pointer">
                     Account Settings
                   </DropdownMenuItem>
-
-                  {isPhotographer && (
-                    <DropdownMenuItem onClick={() => router.push("/dashboard")} className="cursor-pointer md:hidden">
-                      Dashboard
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem onClick={() => router.push("/dashboard")} className="cursor-pointer md:hidden">
+                    Dashboard
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-red-600 cursor-pointer">
                     Sign out

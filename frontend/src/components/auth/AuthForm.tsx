@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { signIn, signUp } from "@/lib/auth";
+import { useState, useEffect } from "react";
+import { signIn, signUp, useSession } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -31,7 +31,22 @@ const signUpSchema = z.object({
 
 export function AuthForm({ type }: AuthFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: session } = useSession();
   
+  const rawCallback = searchParams.get("callbackUrl");
+  const callbackUrl =
+    rawCallback && rawCallback.startsWith("/") && !rawCallback.startsWith("//")
+      ? rawCallback
+      : "/dashboard";
+
+  // If already authenticated with a valid verified session, redirect to destination
+  useEffect(() => {
+    if (session?.user) {
+      router.replace(callbackUrl);
+    }
+  }, [session, callbackUrl, router]);
+
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [verificationPending, setVerificationPending] = useState(false);
@@ -59,7 +74,7 @@ export function AuthForm({ type }: AuthFormProps) {
           email: signUpValues.email,
           password: signUpValues.password,
           name: signUpValues.name || signUpValues.email.split("@")[0],
-          callbackURL: `${window.location.origin}/dashboard`,
+          callbackURL: `${window.location.origin}${callbackUrl}`,
         });
         if (apiError) throw new Error(apiError.message);
         // Backend has requireEmailVerification: true — no session created yet.
@@ -71,7 +86,7 @@ export function AuthForm({ type }: AuthFormProps) {
           password: values.password,
         });
         if (apiError) throw new Error(apiError.message);
-        router.push("/dashboard");
+        router.push(callbackUrl);
         router.refresh();
       }
     } catch (err: unknown) {
@@ -93,7 +108,7 @@ export function AuthForm({ type }: AuthFormProps) {
     try {
       await signIn.social({ 
         provider: "google",
-        callbackURL: `${window.location.origin}/dashboard`,
+        callbackURL: `${window.location.origin}${callbackUrl}`,
       });
     } catch (err: unknown) {
       let msg = err instanceof Error ? err.message : "Google sign-in failed";
@@ -252,7 +267,15 @@ export function AuthForm({ type }: AuthFormProps) {
             ? "Don't have an account? "
             : "Already have an account? "}
           <Link
-            href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+            href={
+              type === "sign-in"
+                ? callbackUrl !== "/dashboard"
+                  ? `/sign-up?callbackUrl=${encodeURIComponent(callbackUrl)}`
+                  : "/sign-up"
+                : callbackUrl !== "/dashboard"
+                  ? `/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`
+                  : "/sign-in"
+            }
             className="font-medium text-zinc-900 dark:text-zinc-100 underline underline-offset-4 hover:text-zinc-700 transition-colors"
           >
             {type === "sign-in" ? "Sign up" : "Sign in"}
