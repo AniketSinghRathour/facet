@@ -59,6 +59,7 @@ model Account {
   password              String?
   createdAt             DateTime
   updatedAt             DateTime
+  issuer                String?
 
   @@map("account")
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signIn, signUp, useSession } from "@/lib/auth";
+import { signIn, signUp, useSession, sendVerificationEmail } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,6 +50,8 @@ export function AuthForm({ type }: AuthFormProps) {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [verificationPending, setVerificationPending] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendStatus, setResendStatus] = useState<string | null>(null);
 
   const isSignUp = type === "sign-up";
 
@@ -118,32 +120,81 @@ export function AuthForm({ type }: AuthFormProps) {
     }
   };
 
+  const handleResendVerification = async (targetEmail?: string) => {
+    const emailToUse = targetEmail || getValues("email");
+    if (!emailToUse || !emailToUse.includes("@")) {
+      setError("Please enter a valid email address to resend the verification link.");
+      return;
+    }
+
+    setResending(true);
+    setResendStatus(null);
+    try {
+      await sendVerificationEmail({
+        email: emailToUse,
+        callbackURL: `${window.location.origin}${callbackUrl}`,
+      });
+      setResendStatus(`Verification link sent to ${emailToUse}. Please check your inbox and spam folder.`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to resend verification email.";
+      setError(msg);
+    } finally {
+      setResending(false);
+    }
+  };
+
   // Show verification pending state after successful email sign-up
   if (verificationPending) {
     return (
       <Card className="w-full max-w-md mx-auto bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden rounded-[2rem] p-2">
-        <CardHeader className="space-y-2 text-center pb-6 pt-8">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-            <svg className="h-6 w-6 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <CardHeader className="space-y-2 text-center pb-4 pt-8">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <svg className="h-6 w-6 text-zinc-900 dark:text-zinc-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
           <CardTitle className="text-2xl font-serif tracking-tight">Check your email</CardTitle>
           <CardDescription className="text-zinc-500 dark:text-zinc-400">
-            We&apos;ve sent a verification link to <strong>{getValues("email")}</strong>. Click it to activate your account.
+            We&apos;ve sent a verification link to <strong className="text-zinc-900 dark:text-zinc-100">{getValues("email")}</strong>. Click it to activate your account.
           </CardDescription>
         </CardHeader>
-        <CardContent className="pb-6">
-          <p className="text-sm text-center text-zinc-500">
-            Didn&apos;t receive it? Check your spam folder, or{" "}
-            <button
-              onClick={() => setVerificationPending(false)}
-              className="font-medium text-zinc-900 dark:text-zinc-100 underline underline-offset-4 hover:text-zinc-700 transition-colors"
+        <CardContent className="space-y-4 pb-6">
+          {resendStatus && (
+            <div className="p-3 text-xs text-center text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+              {resendStatus}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={resending}
+              onClick={() => handleResendVerification()}
+              className="w-full h-11 rounded-full text-xs font-medium cursor-pointer"
             >
-              try again
+              {resending ? (
+                <>
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  Sending email...
+                </>
+              ) : (
+                "Resend verification email"
+              )}
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setVerificationPending(false);
+                setResendStatus(null);
+                setError("");
+              }}
+              className="text-xs text-center text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 py-2 transition-colors cursor-pointer"
+            >
+              Return to form
             </button>
-            .
-          </p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -164,8 +215,23 @@ export function AuthForm({ type }: AuthFormProps) {
       <CardContent className="space-y-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && (
-            <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/50 rounded-md border border-red-200 dark:border-red-900">
-              {error}
+            <div className="p-3.5 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 rounded-xl border border-red-200 dark:border-red-900/60 space-y-1.5">
+              <p>{error}</p>
+              {error.toLowerCase().includes("not verified") && (
+                <button
+                  type="button"
+                  disabled={resending}
+                  onClick={() => handleResendVerification(getValues("email"))}
+                  className="text-xs font-medium underline underline-offset-4 text-red-700 dark:text-red-300 hover:opacity-80 transition-opacity block cursor-pointer"
+                >
+                  {resending ? "Sending verification email..." : "Click here to resend verification email"}
+                </button>
+              )}
+            </div>
+          )}
+          {resendStatus && (
+            <div className="p-3 text-xs text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+              {resendStatus}
             </div>
           )}
           {type === "sign-up" && (

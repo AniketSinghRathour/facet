@@ -11,4 +11,4 @@ export const authClient = createAuthClient({
   baseURL: `${env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth`,
 });
 
-export const { signIn, signUp, signOut, useSession } = authClient;
+export const { signIn, signUp, signOut, useSession, sendVerificationEmail } = authClient;

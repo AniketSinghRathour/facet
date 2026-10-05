@@ -21,10 +21,12 @@ export async function sendEmail({
   to,
   subject,
   html,
+  replyTo,
 }: {
   to: string;
   subject: string;
   html: string;
+  replyTo?: string;
 }) {
   try {
     const info = await transporter.sendMail({
@@ -32,6 +34,7 @@ export async function sendEmail({
       to,
       subject,
       html,
+      ...(replyTo ? { replyTo } : {}),
     });
     console.log("Email sent successfully:", info.messageId);
     return info;
