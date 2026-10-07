@@ -17,6 +17,11 @@ import { errorHandler } from "./common/middleware/errorHandler.js";
 export function createApplication(): Express {
   const app = express();
 
+  // ── 0. Proxy configuration ──
+  // Trust first hop reverse proxy (Cloudflare, AWS ALB, Nginx, Render, etc.)
+  // so that req.ip and express-rate-limit correctly identify client IPs.
+  app.set("trust proxy", 1);
+
   // ── 1. CORS ──
   app.use(cors({
     origin: true,

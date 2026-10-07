@@ -4,6 +4,7 @@ import { validate } from "../../common/middleware/validate.js";
 import { createEventSchema, eventIdParamSchema } from "./event.schema.js";
 import * as eventController from "./event.controller.js";
 import * as photoController from "../photos/photo.controller.js";
+import { publicApiLimiter } from "../../common/middleware/rateLimiter.js";
 
 /**
  * Event routes — all require authentication.
@@ -18,6 +19,7 @@ const router = Router();
 /** GET /api/events/:eventId/public — unauthenticated, minimal event info for attendees */
 router.get(
   "/:eventId/public",
+  publicApiLimiter,
   validate(eventIdParamSchema, "params"),
   eventController.getPublic,
 );
@@ -25,6 +27,7 @@ router.get(
 /** GET /api/events/:eventId/photos/public — unauthenticated, paginated INDEXED photos for attendee gallery */
 router.get(
   "/:eventId/photos/public",
+  publicApiLimiter,
   validate(eventIdParamSchema, "params"),
   photoController.listPublic,
 );

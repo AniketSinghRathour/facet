@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "../../common/config/prisma.js";
 import { env } from "../../common/config/env.js";
 import { sendEmail } from "../../common/config/mailer.js";
+import { checkAccountEmailVerificationLimit } from "../../common/middleware/rateLimiter.js";
 
 /**
  * Better-Auth instance — the single source of auth configuration.
@@ -29,6 +30,14 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
+      // Free-tier limit: 5 verification emails per hour per id/account
+      const accountIdentifier = user.id || user.email;
+      if (!checkAccountEmailVerificationLimit(accountIdentifier)) {
+        throw new Error(
+          "Too many verification email requests for this account. Maximum 5 per hour. Please check your inbox or wait before requesting another link."
+        );
+      }
+
       const emailHtml = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; background: #ffffff; color: #18181b; border-radius: 16px; border: 1px solid #e4e4e7;">
           <div style="margin-bottom: 24px;">

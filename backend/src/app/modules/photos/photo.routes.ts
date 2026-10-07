@@ -8,6 +8,7 @@ import {
   batchDownloadSchema,
 } from "./photo.schema.js";
 import * as photoController from "./photo.controller.js";
+import { photoDownloadLimiter } from "../../common/middleware/rateLimiter.js";
 
 /**
  * Photo routes.
@@ -25,6 +26,7 @@ const router = Router();
 /** GET /api/photos/:photoId/download — presigned high-res S3 download URL (on click) */
 router.get(
   "/:photoId/download",
+  photoDownloadLimiter,
   optionalAuth,
   validate(photoIdParamSchema, "params"),
   photoController.getDownloadUrl,
@@ -33,6 +35,7 @@ router.get(
 /** POST /api/photos/batch-download — presigned high-res S3 download URLs (on "Download All" click) */
 router.post(
   "/batch-download",
+  photoDownloadLimiter,
   optionalAuth,
   validate(batchDownloadSchema, "body"),
   photoController.getBatchDownloadUrls,
