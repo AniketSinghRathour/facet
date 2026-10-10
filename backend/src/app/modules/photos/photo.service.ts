@@ -160,6 +160,9 @@ export async function getBatchPresignedDownloadUrls(
   );
 }
 
+/** Maximum photos allowed per event on free tier */
+export const MAX_PHOTOS_PER_EVENT = 150;
+
 /**
  * Generate presigned S3 upload URLs for a batch of files and
  * create corresponding `pending` Photo rows.
@@ -181,6 +184,19 @@ export async function generateUploadUrls(
 
   if (event.ownerId !== ownerId) {
     throw ApiError.forbidden("You do not own this event");
+  }
+
+  // Check free tier photos quota per event
+  const currentPhotoCount = await prisma.photo.count({
+    where: { eventId },
+  });
+
+  if (currentPhotoCount + files.length > MAX_PHOTOS_PER_EVENT) {
+    const remainingSlots = Math.max(0, MAX_PHOTOS_PER_EVENT - currentPhotoCount);
+    throw ApiError.badRequest(
+      `Photo upload limit reached. Free tier allows up to ${MAX_PHOTOS_PER_EVENT} photos per event. This event currently has ${currentPhotoCount} photos (${remainingSlots} slots remaining, but you requested ${files.length}). For higher capacity shoots, please reach out via our Contact section.`,
+      [`Photo limit exceeded: maximum ${MAX_PHOTOS_PER_EVENT} photos per event on the free tier.`],
+    );
   }
 
   const results = await Promise.all(

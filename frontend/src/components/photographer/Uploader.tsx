@@ -20,9 +20,19 @@ export function Uploader({ eventId }: { eventId: string }) {
 
   const pendingCount = items.filter(i => i.status === "IDLE" || i.status === "ERROR").length;
   const completedCount = items.filter(i => i.status === "SUCCESS").length;
+  const firstError = items.find(i => i.status === "ERROR" && i.error)?.error;
 
   return (
     <div className="space-y-6">
+      {firstError && (
+        <div className="p-4 bg-red-50/80 border border-red-200/80 rounded-2xl text-sm text-red-700 flex items-start gap-3 animate-in fade-in duration-300">
+          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-red-500" />
+          <div className="flex-1 font-light leading-relaxed">
+            <span className="font-medium block mb-0.5">Upload Failed</span>
+            {firstError}
+          </div>
+        </div>
+      )}
       {/* Dropzone Area */}
       <div
         {...getRootProps()}

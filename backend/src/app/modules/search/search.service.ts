@@ -25,7 +25,10 @@ export async function searchByFace(eventId: string, imageBase64: string, userId?
     throw ApiError.notFound("Event not found");
   }
 
-  const imageBytes = Buffer.from(imageBase64, "base64");
+  const cleanBase64 = imageBase64.includes(",")
+    ? imageBase64.split(",")[1]
+    : imageBase64;
+  const imageBytes = Buffer.from(cleanBase64, "base64");
 
   let result;
   try {
@@ -41,6 +44,19 @@ export async function searchByFace(eventId: string, imageBase64: string, userId?
     // AWS throws InvalidParameterException if no faces are found in the uploaded image
     if (error.name === "InvalidParameterException") {
       throw ApiError.badRequest("No face detected in the image. Please upload a clear selfie.");
+    }
+    if (error.name === "ImageTooLargeException") {
+      throw ApiError.badRequest("Selfie image is too large for facial recognition. Please upload an image under 5MB.");
+    }
+    if (error.name === "InvalidImageFormatException") {
+      throw ApiError.badRequest("Unsupported image format. Please upload a JPEG or PNG selfie.");
+    }
+    if (error.name === "ProvisionedThroughputExceededException" || error.name === "ThrottlingException") {
+      throw ApiError.tooManyRequests("Facial recognition service is currently experiencing high demand. Please wait a moment and try again.");
+    }
+    if (error.name === "ResourceNotFoundException") {
+      // Event collection not yet populated or missing — return clean zero matches
+      return { photos: [], downloadToken: null };
     }
     throw error; // Let other unexpected AWS errors bubble up as 500s
   }

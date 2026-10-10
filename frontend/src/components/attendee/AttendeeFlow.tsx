@@ -102,16 +102,56 @@ function SelfieSheet({ onClose, onMatches, eventId }: SelfieSheetProps) {
  }
  }, []);
 
- const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
- const file = e.target.files?.[0];
- if (!file) return;
- const reader = new FileReader();
- reader.onloadend = () => {
- setImageSrc(reader.result as string);
- setStep("review");
- };
- reader.readAsDataURL(file);
- };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (!dataUrl) return;
+
+      const img = new Image();
+      img.onload = () => {
+        const MAX_DIM = 1280;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          // Auto-normalize any format (PNG, WebP, high-res phone camera) to a lightweight ~200KB JPEG
+          const optimizedJpeg = canvas.toDataURL("image/jpeg", 0.85);
+          setImageSrc(optimizedJpeg);
+        } else {
+          setImageSrc(dataUrl);
+        }
+        setStep("review");
+      };
+
+      img.onerror = () => {
+        setImageSrc(dataUrl);
+        setStep("review");
+      };
+
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  };
 
  return (
  <div

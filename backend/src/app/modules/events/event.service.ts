@@ -10,11 +10,26 @@ import { ApiError } from "../../common/utils/ApiError.js";
  * each event maps 1:1 to a Rekognition collection for face indexing.
  */
 
+/** Maximum active events allowed on free tier */
+export const MAX_ACTIVE_EVENTS = 5;
+
 /** Create a new event + its Rekognition collection */
 export async function createEvent(
   ownerId: string,
   data: { name: string; description?: string; coverImage?: string },
 ) {
+  // Check free tier active events quota
+  const activeEventsCount = await prisma.event.count({
+    where: { ownerId },
+  });
+
+  if (activeEventsCount >= MAX_ACTIVE_EVENTS) {
+    throw ApiError.badRequest(
+      `You have reached the free tier limit of ${MAX_ACTIVE_EVENTS} active events. To create additional events or upgrade your plan, please reach out via our Contact section.`,
+      [`Active events limit reached (${MAX_ACTIVE_EVENTS} max). Contact us to upgrade.`],
+    );
+  }
+
   // 1. Create the DB record first to get the auto-generated CUID
   const event = await prisma.event.create({
     data: {

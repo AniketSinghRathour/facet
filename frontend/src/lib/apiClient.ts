@@ -34,7 +34,12 @@ export async function fetchApi<T = any>(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `API error: ${response.status}`);
+    const errorMessage =
+      errorData.message ||
+      (Array.isArray(errorData.errors) && errorData.errors.length > 0
+        ? errorData.errors.join(". ")
+        : `API error: ${response.status}`);
+    throw new Error(errorMessage);
   }
 
   // Expecting the backend's ApiResponse format { success: boolean, message?: string, data: T }

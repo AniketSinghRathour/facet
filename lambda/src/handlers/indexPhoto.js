@@ -69,14 +69,24 @@ export const handler = async (event) => {
     } catch (err) {
       rootLogger.error("Failed to process record", { messageId: record.messageId, error: err });
 
-      if (err instanceof RekognitionPermanentError || err instanceof InvalidPhotoKeyError) {
+      const receiveCount = parseInt(record.attributes?.ApproximateReceiveCount || "1", 10);
+      const isPermanent = err instanceof RekognitionPermanentError || err instanceof InvalidPhotoKeyError;
+
+      // Mark failed in DB immediately for permanent errors, or when max retries reached prior to DLQ
+      if (isPermanent || receiveCount >= 3) {
         try {
           const { photoId } = parsePhotoKeyFromRecordSafely(record);
-          if (photoId) await markPhotoFailed(photoId, err.message);
+          const failureReason = isPermanent
+            ? err.message
+            : `Exceeded maximum retries (${receiveCount} attempts, sent to DLQ): ${err.message}`;
+          if (photoId) await markPhotoFailed(photoId, failureReason);
         } catch {
           // best-effort only
         }
-      } else {
+      }
+
+      // Retry transient errors until maxReceiveCount triggers DLQ
+      if (!isPermanent) {
         batchItemFailures.push({ itemIdentifier: record.messageId });
       }
     }
