@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { fetchApi } from "@/lib/apiClient";
 import { Event } from "@/types/api";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,8 +52,8 @@ export default function CreateEventPage() {
 
       queryClient.invalidateQueries({ queryKey: ["created-events"] });
       router.push(`/dashboard/events/${newEvent.id}`);
-    } catch (err: any) {
-      setError(err.message || "Failed to create event");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create event");
     }
   };
 

@@ -119,7 +119,7 @@ export function Uploader({ eventId }: { eventId: string }) {
                 {item.status === "UPLOADING" && <span className="text-xs font-medium text-amber-700">{item.progress}%</span>}
                 
                 {item.status !== "UPLOADING" && (
-                  <button onClick={() => removeFile(item.id)} className="p-1 text-zinc-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                  <button onClick={() => removeFile(item.id)} className="cursor-pointer p-1 text-zinc-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
                     <X className="h-4 w-4" />
                   </button>
                 )}

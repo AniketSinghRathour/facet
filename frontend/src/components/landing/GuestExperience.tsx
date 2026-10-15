@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ScanFace, Upload, Download, Camera } from "lucide-react";
+import { ArrowRight, Upload, Download, Camera } from "lucide-react";
 import Image from "next/image";
 
 export function GuestExperience() {
@@ -17,7 +17,7 @@ export function GuestExperience() {
               Find your photos<br className="hidden lg:block"/> in seconds.
             </h2>
             <p className="text-base xl:text-lg text-zinc-600 mb-8 max-w-sm font-light leading-relaxed">
-              Guests upload a selfie, we find their photos. It's that simple and private.
+              Guests upload a selfie, we find their photos. It&apos;s that simple and private.
             </p>
             <Link
               href="/join"
@@ -45,15 +45,25 @@ export function GuestExperience() {
               {/* Mobile UI Grid */}
               <div className="p-2 grid grid-cols-2 gap-2">
                 {[
-                  "/images/unsplash/guest-experience-1.jpg",
-                  "/images/unsplash/masonry-2.jpg",
-                  "/images/unsplash/masonry-1.jpg",
-                  "/images/unsplash/event-cover-1.jpg",
-                  "/images/unsplash/guest-experience-2.jpg",
-                  "/images/unsplash/masonry-3.jpg",
+                  "/images/unsplash/guest-experience-1.webp",
+                  "/images/unsplash/masonry-2.webp",
+                  "/images/unsplash/masonry-1.webp",
+                  "/images/unsplash/event-cover-1.webp",
+                  "/images/unsplash/guest-experience-2.webp",
+                  "/images/unsplash/masonry-3.webp",
                 ].map((src, i) => (
-                  <div key={i} className="aspect-square bg-zinc-100 rounded-xl relative overflow-hidden group">
-                    <Image src={src} alt={`Gallery ${i + 1}`} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="130px" />
+                  <div 
+                    key={i} 
+                    style={{ aspectRatio: "1 / 1" }}
+                    className="aspect-square min-h-[110px] bg-zinc-100 rounded-xl relative overflow-hidden group"
+                  >
+                    <Image 
+                      src={src} 
+                      alt={`Gallery ${i + 1}`} 
+                      fill 
+                      className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                      sizes="130px" 
+                    />
                   </div>
                 ))}
               </div>

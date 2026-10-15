@@ -62,15 +62,15 @@ export function PhotoCard({
 
  {/* Download button - bottom right */}
  {onDownload && (
- <button
- onClick={(e) => {
- e.stopPropagation();
- onDownload(photo);
- }}
- className="absolute bottom-2 right-2 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border border-white/30 transition-colors opacity-0 group-hover:opacity-100 z-10"
- >
- <Download className="h-4 w-4" />
- </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDownload(photo);
+            }}
+            className="cursor-pointer absolute bottom-2 right-2 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border border-white/30 transition-colors opacity-0 group-hover:opacity-100 z-10"
+          >
+            <Download className="h-4 w-4" />
+          </button>
  )}
 
  {/* Custom overlays (status badges, selection checkboxes, etc.) */}

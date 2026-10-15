@@ -42,7 +42,7 @@ export function ConsentModal({ onAccept, onClose }: ConsentModalProps) {
  </div>
  <button
  onClick={onClose}
- className="p-1.5 rounded-full hover:bg-zinc-100 transition-colors"
+ className="cursor-pointer p-1.5 rounded-full hover:bg-zinc-100 transition-colors"
  >
  <X className="h-5 w-5 text-zinc-500" />
  </button>

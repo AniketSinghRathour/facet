@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter, Fraunces, Pinyon_Script } from "next/font/google";
 import { AppProviders } from "@/providers/AppProviders";
 import { Navbar } from "@/components/layout/Navbar";
 import "./globals.css";
@@ -11,6 +11,12 @@ const inter = Inter({
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
+  subsets: ["latin"],
+});
+
+const pinyonScript = Pinyon_Script({
+  variable: "--font-script",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -27,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} ${pinyonScript.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans text-zinc-900 bg-[#FAF7F2]">
         <AppProviders>

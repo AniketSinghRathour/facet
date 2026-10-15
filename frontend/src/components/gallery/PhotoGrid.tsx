@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { PhotoCard, type PhotoCardPhoto } from "./PhotoCard";
 import { PhotoLightbox, type LightboxPhoto } from "./PhotoLightbox";
 import { LoadMoreButton } from "./LoadMoreButton";
-import { Images, Loader2 } from "lucide-react";
+import { Images } from "lucide-react";
 
 /**
  * PhotoGrid — the ONE shared grid component per §9.
@@ -23,7 +23,7 @@ import { Images, Loader2 } from "lucide-react";
  * - Staggered entrance animation per §8
  */
 
-export interface GridPhoto extends PhotoCardPhoto {}
+export type GridPhoto = PhotoCardPhoto;
 
 interface PhotoGridProps {
  /** The flat list of photos to display (already accumulated from all pages) */

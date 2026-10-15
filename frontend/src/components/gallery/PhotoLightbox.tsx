@@ -100,7 +100,7 @@ export function PhotoLightbox({
  )}
  <button
  onClick={onClose}
- className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+ className="cursor-pointer p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
  >
  <X className="h-5 w-5" />
  </button>
@@ -134,7 +134,7 @@ export function PhotoLightbox({
  e.stopPropagation();
  prev();
  }}
- className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+ className="cursor-pointer absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
  >
  <ChevronLeft className="h-6 w-6" />
  </button>
@@ -143,7 +143,7 @@ export function PhotoLightbox({
  e.stopPropagation();
  next();
  }}
- className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+ className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
  >
  <ChevronRight className="h-6 w-6" />
  </button>
@@ -160,7 +160,7 @@ export function PhotoLightbox({
  <button
  key={p.id}
  onClick={() => setCurrent(i)}
- className={`shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all ${
+ className={`cursor-pointer shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all ${
  i === current
  ? "border-white scale-110"
  : "border-white/20 opacity-50 hover:opacity-80"

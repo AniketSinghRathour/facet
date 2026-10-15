@@ -10,7 +10,7 @@ export function Testimonial() {
           <div className="md:w-1/3 relative">
              <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-zinc-800 shadow-2xl z-10">
                <Image 
-                 src="/images/unsplash/testimonial-1.jpg" 
+                 src="/images/unsplash/testimonial-1.webp" 
                  alt="Photographer" 
                  fill 
                  sizes="(max-width: 768px) 100vw, 33vw"
@@ -23,7 +23,7 @@ export function Testimonial() {
           <div className="md:w-2/3 space-y-6 text-center md:text-left">
             <Quote className="h-12 w-12 text-zinc-700 mb-6 mx-auto md:mx-0" />
             <blockquote className="text-2xl md:text-4xl font-serif leading-tight">
-              "Facet changed how I deliver event galleries. Instead of scrolling through thousands of photos, attendees find their moments instantly."
+              &ldquo;Facet changed how I deliver event galleries. Instead of scrolling through thousands of photos, attendees find their moments instantly.&rdquo;
             </blockquote>
             <div className="pt-4">
               <div className="text-lg font-medium">Sarah Jenkins</div>

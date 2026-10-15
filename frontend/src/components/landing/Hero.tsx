@@ -5,16 +5,16 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useAccountCapabilities } from "@/hooks/useAccountCapabilities";
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   const { isAuthenticated, isLoading } = useAccountCapabilities();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   // When logged in, "Get Started" takes them directly to their dashboard.
   // When not logged in, redirects to login first with callbackUrl=/dashboard preserved.
@@ -25,10 +25,10 @@ export function Hero() {
       : `/sign-in?callbackUrl=${destination}`;
 
   return (
-    <section className="relative w-full h-[100vh] min-h-[600px] max-h-[1000px] bg-zinc-950 overflow-hidden">
+    <section className="relative w-full h-[100vh] h-[100dvh] min-h-[500px] sm:min-h-[600px] max-h-[1000px] bg-zinc-950 overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/hero_bg/hero-main.png"
+        src="/hero_bg/hero-main.webp"
         alt="Event guests"
         fill
         sizes="100vw"
@@ -49,20 +49,20 @@ export function Hero() {
       <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-zinc-950/95 via-zinc-950/60 to-transparent z-[1]" />
 
       {/* Content */}
-      <div className="absolute inset-0 z-20 flex flex-col justify-end lg:justify-center p-6 pb-16 sm:p-12 lg:p-16 xl:px-24 w-full">
-        <div className="max-w-3xl w-full text-left self-start mt-auto lg:mt-0 pt-20 lg:pt-0">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-serif text-white tracking-tighter leading-[1.05] mb-4 md:mb-5 drop-shadow-md">
+      <div className="absolute inset-0 z-20 flex flex-col justify-end lg:justify-center p-6 pb-8 sm:p-12 sm:pb-16 lg:p-16 xl:px-24 w-full">
+        <div className="max-w-3xl w-full text-left self-start mt-auto lg:mt-0 pt-0 sm:pt-8 lg:pt-0">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-serif text-white tracking-tighter leading-[1.08] sm:leading-[1.05] mb-3 sm:mb-4 md:mb-5 drop-shadow-md">
             Give every guest<br />their perfect photo.
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-zinc-300 mb-6 md:mb-8 max-w-2xl font-light leading-relaxed drop-shadow-md">
+          <p className="text-base sm:text-xl md:text-2xl text-zinc-300 mb-5 sm:mb-6 md:mb-8 max-w-2xl font-light leading-relaxed drop-shadow-md">
             Upload your shoot. We automatically sort and deliver every guest their own gallery — no editing, no manual tagging.
           </p>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <Link
               href={ctaHref}
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "group rounded-full h-14 md:h-16 px-10 md:px-12 text-lg md:text-xl bg-white text-zinc-950 hover:bg-zinc-100 hover:scale-[1.02] transition-all duration-300 font-medium shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] shrink-0 flex items-center justify-center gap-2"
+                "group rounded-full h-12 sm:h-14 md:h-16 px-8 sm:px-10 md:px-12 text-base sm:text-lg md:text-xl bg-white text-zinc-950 hover:bg-zinc-100 hover:scale-[1.02] transition-all duration-300 font-medium shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] shrink-0 flex items-center justify-center gap-2"
               )}
             >
               <span>Get Started</span>

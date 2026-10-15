@@ -8,7 +8,7 @@ import { env } from "./env";
  * Optionally takes a Zod schema to parse the response data, ensuring
  * runtime type safety and automatic coercion (e.g. string -> Date).
  */
-export async function fetchApi<T = any>(
+export async function fetchApi<T = unknown>(
   endpoint: string,
   options?: RequestInit & { schema?: z.ZodType<T> }
 ): Promise<T> {

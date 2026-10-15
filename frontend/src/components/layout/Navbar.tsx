@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAccountCapabilities } from "@/hooks/useAccountCapabilities";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut } from "@/lib/auth";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/layout/Logo";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -38,13 +39,7 @@ export function Navbar() {
     )}>
       <div className="container mx-auto px-4 lg:px-8 h-16 flex items-center justify-between max-w-[1400px]">
         <div className="flex items-center gap-6">
-          <Link href="/" className={cn(
-            "font-serif text-3xl tracking-tight font-semibold",
-            isHome ? "text-white drop-shadow-md" : "text-zinc-900"
-          )}>
-            Facet
-          </Link>
-
+          <Logo isHome={isHome} />
         </div>
 
         <div className="flex items-center gap-4">

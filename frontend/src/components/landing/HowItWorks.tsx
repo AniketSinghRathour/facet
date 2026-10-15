@@ -16,7 +16,7 @@ export function HowItWorks() {
             <button
               onClick={() => setActiveTab("photographer")}
               className={cn(
-                "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
+                "cursor-pointer px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
                 activeTab === "photographer" ? "bg-zinc-900 text-white shadow-md" : "text-zinc-600 hover:text-zinc-900"
               )}
             >
@@ -25,7 +25,7 @@ export function HowItWorks() {
             <button
               onClick={() => setActiveTab("attendee")}
               className={cn(
-                "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
+                "cursor-pointer px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
                 activeTab === "attendee" ? "bg-zinc-900 text-white shadow-md" : "text-zinc-600 hover:text-zinc-900"
               )}
             >
@@ -63,7 +63,7 @@ export function HowItWorks() {
               <div className="border-t border-zinc-300 pt-6">
                 <span className="text-4xl font-serif text-zinc-900 mb-4 block">1</span>
                 <h3 className="text-xl font-medium text-zinc-900 mb-2">Upload a selfie</h3>
-                <p className="text-zinc-500 mb-6">Upload a selfie. We'll find every photo you're in — automatically.</p>
+                <p className="text-zinc-500 mb-6">Upload a selfie. We&apos;ll find every photo you&apos;re in — automatically.</p>
                 <Upload className="h-6 w-6 text-amber-600/70" />
               </div>
               <div className="border-t border-zinc-300 pt-6">

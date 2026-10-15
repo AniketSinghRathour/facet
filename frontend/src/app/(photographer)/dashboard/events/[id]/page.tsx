@@ -22,7 +22,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -115,7 +114,7 @@ function PhotoLightbox({ photos, startIndex, onClose, onDownload }: LightboxProp
               <Download className="h-4 w-4 mr-1.5" /> Download
             </Button>
           )}
-          <button onClick={onClose} className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <button onClick={onClose} className="cursor-pointer p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -134,10 +133,10 @@ function PhotoLightbox({ photos, startIndex, onClose, onDownload }: LightboxProp
 
       {photos.length > 1 && (
         <>
-          <button onClick={(e) => { e.stopPropagation(); prev(); }} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <button onClick={(e) => { e.stopPropagation(); prev(); }} className="cursor-pointer absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
             <ChevronLeft className="h-6 w-6" />
           </button>
-          <button onClick={(e) => { e.stopPropagation(); next(); }} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+          <button onClick={(e) => { e.stopPropagation(); next(); }} className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
             <ChevronRight className="h-6 w-6" />
           </button>
         </>
@@ -150,7 +149,7 @@ function PhotoLightbox({ photos, startIndex, onClose, onDownload }: LightboxProp
               key={p.id}
               onClick={() => setCurrent(i)}
               className={cn(
-                "shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all relative",
+                "cursor-pointer shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all relative",
                 i === current ? "border-white scale-110" : "border-white/20 opacity-50 hover:opacity-80"
               )}
             >
@@ -358,7 +357,7 @@ export default function EventDetailPage({ params }: PageProps) {
         {(statusCounts?.failed ?? 0) > 0 && (
           <button
             onClick={() => setStatusFilter("FAILED")}
-            className="mt-4 w-full text-xs text-red-500 hover:text-red-700 transition-colors text-center underline underline-offset-2"
+            className="cursor-pointer mt-4 w-full text-xs text-red-500 hover:text-red-700 transition-colors text-center underline underline-offset-2"
           >
             View failed photos →
           </button>
@@ -401,7 +400,7 @@ export default function EventDetailPage({ params }: PageProps) {
             <div className="flex gap-4 md:gap-6 items-end">
               <div className="relative h-20 w-20 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200 shadow-sm">
                 <Image
-                  src={event.coverImage || "/images/unsplash/event-cover-1.jpg"}
+                  src={event.coverImage || "/images/unsplash/event-cover-1.webp"}
                   alt={event.name}
                   fill
                   sizes="128px"
@@ -577,7 +576,7 @@ export default function EventDetailPage({ params }: PageProps) {
                         key={tab.key}
                         onClick={() => { setStatusFilter(tab.key); setSelectedPhotos(new Set()); }}
                         className={cn(
-                          "px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5",
+                          "cursor-pointer px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5",
                           statusFilter === tab.key
                             ? "bg-white  shadow-sm text-zinc-900 "
                             : "text-zinc-500 hover:text-zinc-700 :text-zinc-300"
@@ -658,7 +657,7 @@ export default function EventDetailPage({ params }: PageProps) {
                       {/* Download button */}
                       {photo.status === "INDEXED" && photo.previewUrl && (
                         <button
-                          className="absolute top-2 right-2 p-1.5 rounded-full bg-black/30 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                          className="cursor-pointer absolute top-2 right-2 p-1.5 rounded-full bg-black/30 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity z-20"
                           onClick={(e) => { e.stopPropagation(); handleDownload(photo); }}
                         >
                           <Download className="h-3.5 w-3.5" />
@@ -668,7 +667,7 @@ export default function EventDetailPage({ params }: PageProps) {
                       {/* Selection checkbox */}
                       <div
                         className={cn(
-                          "absolute bottom-2 left-2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors z-20",
+                          "cursor-pointer absolute bottom-2 left-2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors z-20",
                           selectedPhotos.has(photo.id)
                             ? "bg-indigo-500 border-indigo-500 text-white"
                             : "border-white/50 bg-black/20 opacity-0 group-hover:opacity-100"

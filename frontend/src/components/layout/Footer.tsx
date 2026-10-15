@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { env } from "@/lib/env";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 
 export function Footer() {
   const [formState, setFormState] = useState({
@@ -205,9 +205,7 @@ export function Footer() {
         {/* Bottom Row: Minimal Brand & Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-3">
-            <Link href="/" className="font-serif text-2xl font-semibold text-white tracking-tight hover:opacity-90 transition-opacity">
-              Facet
-            </Link>
+            <Logo isHome={true} />
             <span className="text-zinc-700">&middot;</span>
             <span className="text-xs text-zinc-500">
               Event photo recognition platform

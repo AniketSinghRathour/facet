@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/apiClient";
 import { Button } from "@/components/ui/button";
@@ -169,7 +169,7 @@ function SelfieSheet({ onClose, onMatches, eventId }: SelfieSheetProps) {
  </h2>
  <button
  onClick={onClose}
- className="p-1.5 rounded-full hover:bg-zinc-100 transition-colors"
+ className="cursor-pointer p-1.5 rounded-full hover:bg-zinc-100 transition-colors"
  >
  <X className="h-5 w-5 text-zinc-500" />
  </button>
@@ -272,7 +272,6 @@ function SelfieSheet({ onClose, onMatches, eventId }: SelfieSheetProps) {
 export function AttendeeFlow({ eventId }: AttendeeFlowProps) {
  const [event, setEvent] = useState<PublicEvent | null>(null);
  const [eventError, setEventError] = useState(false);
- const [eventLoaded, setEventLoaded] = useState(false);
  const [showConsentModal, setShowConsentModal] = useState(false);
  const [showSelfieSheet, setShowSelfieSheet] = useState(false);
  const [matchedPhotos, setMatchedPhotos] = useState<MatchedPhoto[] | null>(
@@ -292,17 +291,15 @@ export function AttendeeFlow({ eventId }: AttendeeFlowProps) {
  const downloadPhoto = useDownloadPhoto();
 
  // Fetch event info on mount
- useState(() => {
+ useEffect(() => {
  fetchApi<PublicEvent>(`/events/${eventId}/public`)
  .then((data) => {
  setEvent(data);
- setEventLoaded(true);
  })
  .catch(() => {
  setEventError(true);
- setEventLoaded(true);
  });
- });
+ }, [eventId]);
 
  // Handle "Find My Photos" click — shows consent first (§4)
  const handleFindMyPhotos = () => {
@@ -343,8 +340,9 @@ export function AttendeeFlow({ eventId }: AttendeeFlowProps) {
  {/* ── Hero ── */}
  <div className="px-4 pt-4 md:px-8 md:pt-8 max-w-[1400px] mx-auto">
   <div className="relative h-56 md:h-72 overflow-hidden bg-zinc-900 rounded-[2.5rem] border border-zinc-200/50 shadow-sm flex flex-col items-center justify-center text-center px-4">
+  {/* eslint-disable-next-line @next/next/no-img-element */}
   <img
-  src={event?.coverImage || "/images/unsplash/event-cover-1.jpg"}
+  src={event?.coverImage || "/images/unsplash/event-cover-1.webp"}
   alt={event?.name ?? "Event"}
   className="absolute inset-0 w-full h-full object-cover"
   />
@@ -380,7 +378,7 @@ export function AttendeeFlow({ eventId }: AttendeeFlowProps) {
   </span>
   <button
   onClick={() => setMatchedPhotos(null)}
-  className="flex items-center justify-center sm:justify-start gap-1 text-xs text-zinc-500 hover:text-zinc-900 transition-colors underline mt-1 sm:mt-0"
+  className="cursor-pointer flex items-center justify-center sm:justify-start gap-1 text-xs text-zinc-500 hover:text-zinc-900 transition-colors underline mt-1 sm:mt-0"
   >
   <Images className="h-3.5 w-3.5" /> View all photos
   </button>

@@ -83,7 +83,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 text-sm text-zinc-600">
             <span className="font-medium text-zinc-500">Sort by:</span>
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1 font-medium hover:text-zinc-900 transition-colors focus:outline-none">
+              <DropdownMenuTrigger className="cursor-pointer flex items-center gap-1 font-medium hover:text-zinc-900 transition-colors focus:outline-none">
                 {sortBy === "newest" ? "Newest" : sortBy === "oldest" ? "Oldest" : "A-Z"} <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
@@ -117,7 +117,7 @@ export default function DashboardPage() {
         ) : filteredAndSortedEvents.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredAndSortedEvents.map((event) => {
-              const displayImage = event.coverImage || "/images/unsplash/event-cover-1.jpg";
+              const displayImage = event.coverImage || "/images/unsplash/event-cover-1.webp";
 
               return (
                 <Link key={event.id} href={`/dashboard/events/${event.id}`} className="group block h-full">

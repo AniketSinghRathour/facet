@@ -1,14 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 
 export function MasonryGallery() {
   const images = [
-    { src: "/images/unsplash/masonry-1.jpg", aspect: "aspect-[4/3]" }, // Former pos 3
-    { src: "/images/unsplash/masonry-2.jpg", aspect: "aspect-[3/4]" },
-    { src: "/images/hero_event.jpg", aspect: "aspect-[4/5]", isHeroFilter: true }, // Swapped from pos 4
-    { src: "/images/unsplash/masonry-3.jpg", aspect: "aspect-square" }, // Swapped from pos 6
-    { src: "/images/unsplash/masonry-4.jpg", aspect: "aspect-[16/9]" }, // Swapped from pos 6
-    { src: "/images/unsplash/event-cover-1.jpg", aspect: "aspect-[3/4]" }, // Swapped from pos 4
+    { src: "/images/unsplash/masonry-1.webp", aspect: "aspect-[4/3]", style: { aspectRatio: "4/3" } }, // Former pos 3
+    { src: "/images/unsplash/masonry-2.webp", aspect: "aspect-[3/4]", style: { aspectRatio: "3/4" } },
+    { src: "/images/hero_event.webp", aspect: "aspect-[4/5]", isHeroFilter: true, style: { aspectRatio: "4/5" } }, // Swapped from pos 4
+    { src: "/images/unsplash/masonry-3.webp", aspect: "aspect-square", style: { aspectRatio: "1/1" } }, // Swapped from pos 6
+    { src: "/images/unsplash/masonry-4.webp", aspect: "aspect-[16/9]", style: { aspectRatio: "16/9" } }, // Swapped from pos 6
+    { src: "/images/unsplash/event-cover-1.webp", aspect: "aspect-[3/4]", style: { aspectRatio: "3/4" } }, // Swapped from pos 4
   ];
 
   return (
@@ -26,9 +25,13 @@ export function MasonryGallery() {
           </div> */}
         </div>
 
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
           {images.map((img, i) => (
-            <div key={i} className={`relative w-full ${img.aspect} rounded-2xl overflow-hidden group break-inside-avoid shadow-sm hover:shadow-xl transition-all duration-500`}>
+            <div 
+              key={i} 
+              style={img.style}
+              className={`relative w-full ${img.aspect} min-h-[200px] mb-4 rounded-2xl overflow-hidden group break-inside-avoid shadow-sm hover:shadow-xl transition-all duration-500`}
+            >
               <Image 
                 src={img.src} 
                 alt={`Gallery image ${i + 1}`} 

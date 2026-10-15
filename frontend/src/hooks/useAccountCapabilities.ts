@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/apiClient";
 import { useSession } from "@/lib/auth";
+import type { Event } from "@/types/api";
 
 /**
  * Derives account capabilities from the current session and API state.
@@ -15,7 +16,7 @@ export function useAccountCapabilities() {
 
   const { data: createdEvents, isLoading: eventsLoading } = useQuery({
     queryKey: ["created-events"],
-    queryFn: () => fetchApi<any[]>("/events"),
+    queryFn: () => fetchApi<Event[]>("/events"),
     enabled: !!session,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
