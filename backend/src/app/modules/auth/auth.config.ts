@@ -23,6 +23,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     ...new Set([
       "http://localhost:3000",
+      "http://localhost:8080",
       ...(env.BETTER_AUTH_URL ? [env.BETTER_AUTH_URL.replace(/\/$/, "")] : []),
       ...(env.FRONTEND_URL ? env.FRONTEND_URL.split(",").map((s) => s.trim().replace(/\/$/, "")).filter(Boolean) : []),
     ]),

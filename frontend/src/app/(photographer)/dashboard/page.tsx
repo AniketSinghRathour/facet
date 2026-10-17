@@ -116,7 +116,7 @@ export default function DashboardPage() {
           </div>
         ) : filteredAndSortedEvents.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {filteredAndSortedEvents.map((event) => {
+            {filteredAndSortedEvents.map((event, index) => {
               const displayImage = event.coverImage || "/images/unsplash/event-cover-1.webp";
 
               return (
@@ -127,6 +127,7 @@ export default function DashboardPage() {
                         src={displayImage} 
                         alt={event.name} 
                         fill 
+                        priority={index === 0}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />

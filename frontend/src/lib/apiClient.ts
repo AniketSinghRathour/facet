@@ -13,7 +13,11 @@ export async function fetchApi<T = unknown>(
   options?: RequestInit & { schema?: z.ZodType<T> }
 ): Promise<T> {
   const { schema, ...fetchOptions } = options || {};
-  const url = `${env.NEXT_PUBLIC_API_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url =
+    typeof window !== "undefined"
+      ? `/api${cleanEndpoint}`
+      : `${env.NEXT_PUBLIC_API_URL}${cleanEndpoint}`;
   
   const defaultOptions: RequestInit = {
     headers: {

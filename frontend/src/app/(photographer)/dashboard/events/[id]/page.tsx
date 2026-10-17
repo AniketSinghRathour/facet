@@ -403,6 +403,7 @@ export default function EventDetailPage({ params }: PageProps) {
                   src={event.coverImage || "/images/unsplash/event-cover-1.webp"}
                   alt={event.name}
                   fill
+                  priority
                   sizes="128px"
                   className="object-cover"
                 />
