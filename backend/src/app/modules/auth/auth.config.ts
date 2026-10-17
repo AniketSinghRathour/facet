@@ -23,9 +23,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     ...new Set([
       "http://localhost:3000",
-      "https://facet-blue.vercel.app",
-      "https://*.vercel.app",
-      ...(env.FRONTEND_URL ? env.FRONTEND_URL.split(",").map((s) => s.trim()).filter(Boolean) : []),
+      ...(env.BETTER_AUTH_URL ? [env.BETTER_AUTH_URL.replace(/\/$/, "")] : []),
+      ...(env.FRONTEND_URL ? env.FRONTEND_URL.split(",").map((s) => s.trim().replace(/\/$/, "")).filter(Boolean) : []),
     ]),
   ],
 
