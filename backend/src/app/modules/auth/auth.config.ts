@@ -20,7 +20,12 @@ export const auth = betterAuth({
   }),
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
-  trustedOrigins: ["http://localhost:3000"], // Allow frontend cross-origin requests
+  trustedOrigins: [
+    ...new Set([
+      "http://localhost:3000",
+      ...(env.FRONTEND_URL ? env.FRONTEND_URL.split(",").map((s) => s.trim()).filter(Boolean) : []),
+    ]),
+  ],
 
   emailAndPassword: {
     enabled: true,

@@ -25,10 +25,15 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    const backendOrigin =
+      process.env.BETTER_AUTH_BACKEND_URL ||
+      process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, "") ||
+      "http://localhost:8080";
+
     return [
       {
         source: "/api/auth/:path*",
-        destination: "http://localhost:8080/api/auth/:path*",
+        destination: `${backendOrigin}/api/auth/:path*`,
       },
     ];
   },

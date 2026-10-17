@@ -23,6 +23,7 @@ const envSchema = z.object({
   R2_SECRET_ACCESS_KEY: z.string().min(1),
   R2_BUCKET: z.string().min(1),
   R2_PUBLIC_BASE_URL: z.string().url().optional(),
+  FRONTEND_URL: z.string().optional().default("http://localhost:3000"),
 });
 
 /**

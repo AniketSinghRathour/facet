@@ -61,51 +61,54 @@ interface SelfieSheetProps {
 }
 
 function SelfieSheet({ onClose, onMatches, eventId }: SelfieSheetProps) {
- const [step, setStep] = useState<SelfieStep>("capture");
- const [imageSrc, setImageSrc] = useState<string | null>(null);
- const [error, setError] = useState<string | null>(null);
- const webcamRef = useRef<Webcam>(null);
+  const [step, setStep] = useState<SelfieStep>("capture");
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const webcamRef = useRef<Webcam>(null);
 
- const searchMutation = useMutation({
- mutationFn: async (base64Img: string) => {
- const payload = {
- eventId,
- image: base64Img.includes(",") ? base64Img.split(",")[1] : base64Img,
- };
- const response = await fetchApi<{
- matchCount: number;
- photos: MatchedPhoto[];
- downloadToken?: string;
- }>("/search", {
- method: "POST",
- body: JSON.stringify(payload),
- });
- return {
- photos: response.photos ?? [],
- downloadToken: response.downloadToken,
- };
- },
- onSuccess: (data) => {
- onMatches(data);
- onClose();
- },
- onError: (err: Error) => {
- setError(err.message ?? "Search failed. Please try again.");
- },
- });
+  const searchMutation = useMutation({
+    mutationFn: async (base64Img: string) => {
+      const payload = {
+        eventId,
+        image: base64Img.includes(",") ? base64Img.split(",")[1] : base64Img,
+      };
+      const response = await fetchApi<{
+        matchCount: number;
+        photos: MatchedPhoto[];
+        downloadToken?: string;
+      }>("/search", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      return {
+        photos: response.photos ?? [],
+        downloadToken: response.downloadToken,
+      };
+    },
+    onSuccess: (data) => {
+      onMatches(data);
+      onClose();
+    },
+    onError: (err: Error) => {
+      setError(err.message ?? "Search failed. Please try again.");
+    },
+  });
 
- const capture = useCallback(() => {
- const image = webcamRef.current?.getScreenshot();
- if (image) {
- setImageSrc(image);
- setStep("review");
- }
- }, []);
+  const capture = useCallback(() => {
+    const image = webcamRef.current?.getScreenshot();
+    if (image) {
+      setImageSrc(image);
+      setStep("review");
+      setIsCameraActive(false);
+    }
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = "";
+    setIsCameraActive(false);
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -153,118 +156,173 @@ function SelfieSheet({ onClose, onMatches, eventId }: SelfieSheetProps) {
     reader.readAsDataURL(file);
   };
 
- return (
- <div
- className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
- onClick={onClose}
- >
- <div
- className="bg-white w-full max-w-lg rounded-[2rem] overflow-hidden shadow-2xl"
- onClick={(e) => e.stopPropagation()}
- >
- <div className="p-6 space-y-5">
- <div className="flex items-center justify-between">
- <h2 className="text-2xl font-serif text-zinc-900 ">
- {step === "capture" ? "Find My Photos" : "Looking good?"}
- </h2>
- <button
- onClick={onClose}
- className="cursor-pointer p-1.5 rounded-full hover:bg-zinc-100 transition-colors"
- >
- <X className="h-5 w-5 text-zinc-500" />
- </button>
- </div>
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white w-full max-w-lg rounded-[2rem] overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 space-y-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-serif text-zinc-900 ">
+              {step === "capture"
+                ? isCameraActive
+                  ? "Take a Selfie"
+                  : "Find My Photos"
+                : "Looking good?"}
+            </h2>
+            <button
+              onClick={onClose}
+              className="cursor-pointer p-1.5 rounded-full hover:bg-zinc-100 transition-colors"
+            >
+              <X className="h-5 w-5 text-zinc-500" />
+            </button>
+          </div>
 
- <p className="text-sm text-zinc-500">
- {step === "capture"
- ? "Take or upload a selfie — our AI will find your photos in this event."
- : "Confirm your selfie and we'll start scanning the event photos."}
- </p>
+          <p className="text-sm text-zinc-500">
+            {step === "capture"
+              ? isCameraActive
+                ? "Align your face in the oval guide and snap your selfie."
+                : "Take a live selfie or upload an existing photo to find your matches."
+              : "Confirm your selfie and we'll start scanning the event photos."}
+          </p>
 
- {error && (
- <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 text-sm">
- <AlertCircle className="h-4 w-4 shrink-0" />
- {error}
- </div>
- )}
+          {error && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 text-sm">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              {error}
+            </div>
+          )}
 
- <div className="relative rounded-2xl overflow-hidden aspect-video bg-zinc-100 shadow-inner">
- {step === "capture" ? (
- <>
- <Webcam
- audio={false}
- ref={webcamRef}
- screenshotFormat="image/jpeg"
- videoConstraints={{ facingMode: "user" }}
- className="w-full h-full object-cover"
- />
- <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
- <div className="w-32 h-44 border-2 border-white/50 rounded-[2.5rem] border-dashed" />
- </div>
- </>
- ) : imageSrc ? (
- // eslint-disable-next-line @next/next/no-img-element
- <img
- src={imageSrc}
- alt="Your selfie"
- className="w-full h-full object-cover"
- />
- ) : null}
- </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video bg-zinc-100 shadow-inner">
+            {step === "capture" ? (
+              isCameraActive ? (
+                <>
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={{ facingMode: "user" }}
+                    onUserMediaError={(err) => {
+                      console.error("Webcam access error:", err);
+                      setError(
+                        "Unable to access camera. Please allow camera permissions in your browser or upload a photo instead."
+                      );
+                      setIsCameraActive(false);
+                    }}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-32 h-44 border-2 border-white/70 rounded-[2.5rem] border-dashed shadow-sm" />
+                  </div>
+                </>
+              ) : (
+                <div className="h-full w-full bg-zinc-50 border border-zinc-200/60 rounded-2xl flex flex-col items-center justify-center p-6 text-center">
+                  <div className="h-14 w-14 rounded-full bg-white border border-zinc-200/80 shadow-sm flex items-center justify-center mb-3 text-zinc-700">
+                    <Camera className="h-7 w-7 text-zinc-600 stroke-[1.5]" />
+                  </div>
+                  <p className="text-sm font-medium text-zinc-800">
+                    Add your selfie
+                  </p>
+                  <p className="text-xs text-zinc-500 max-w-xs mt-1">
+                    Take a live photo or upload from your device. Your photo is never stored.
+                  </p>
+                </div>
+              )
+            ) : imageSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageSrc}
+                alt="Your selfie"
+                className="w-full h-full object-cover"
+              />
+            ) : null}
+          </div>
 
- {step === "capture" ? (
- <div className="flex gap-3">
- <Button onClick={capture} className="flex-1 h-12 shadow-md">
- <Camera className="mr-2 h-4 w-4" /> Capture
- </Button>
- <Label
- htmlFor="selfie-upload"
- className="flex-1 cursor-pointer h-12 rounded-xl border border-zinc-200 flex items-center justify-center text-sm font-medium hover:bg-zinc-50 transition-colors shadow-sm bg-transparent"
- >
- <Upload className="mr-2 h-4 w-4" /> Upload
- </Label>
- <input
- id="selfie-upload"
- type="file"
- accept="image/*"
- className="hidden"
- onChange={handleFileUpload}
- />
- </div>
- ) : (
- <div className="flex gap-3">
- <Button
- variant="outline"
- onClick={() => {
- setImageSrc(null);
- setStep("capture");
- setError(null);
- }}
- className="flex-1 h-12 shadow-sm"
- >
- <RefreshCcw className="mr-2 h-4 w-4" /> Retake
- </Button>
- <Button
- onClick={() => imageSrc && searchMutation.mutate(imageSrc)}
- disabled={searchMutation.isPending}
- className="flex-1 h-12 shadow-md bg-zinc-900 hover:bg-zinc-800 text-white"
- >
- {searchMutation.isPending ? (
- <>
- <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Scanning...
- </>
- ) : (
- <>
- <Search className="mr-2 h-4 w-4" /> Find My Photos
- </>
- )}
- </Button>
- </div>
- )}
- </div>
- </div>
- </div>
- );
+          {step === "capture" ? (
+            isCameraActive ? (
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsCameraActive(false);
+                    setError(null);
+                  }}
+                  className="h-12 px-5 shadow-sm rounded-xl"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={capture}
+                  className="flex-1 h-12 shadow-md bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl"
+                >
+                  <Camera className="mr-2 h-4 w-4" /> Snap Photo
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => {
+                    setError(null);
+                    setIsCameraActive(true);
+                  }}
+                  className="flex-1 h-12 shadow-md bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl"
+                >
+                  <Camera className="mr-2 h-4 w-4" /> Take Live Selfie
+                </Button>
+                <Label
+                  htmlFor="selfie-upload"
+                  className="flex-1 cursor-pointer h-12 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-800 flex items-center justify-center text-sm font-medium transition-colors shadow-sm"
+                >
+                  <Upload className="mr-2 h-4 w-4" /> Upload Photo
+                </Label>
+                <input
+                  id="selfie-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
+              </div>
+            )
+          ) : (
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setImageSrc(null);
+                  setStep("capture");
+                  setIsCameraActive(false);
+                  setError(null);
+                }}
+                className="flex-1 h-12 shadow-sm rounded-xl"
+              >
+                <RefreshCcw className="mr-2 h-4 w-4" /> Retake
+              </Button>
+              <Button
+                onClick={() => imageSrc && searchMutation.mutate(imageSrc)}
+                disabled={searchMutation.isPending}
+                className="flex-1 h-12 shadow-md bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl"
+              >
+                {searchMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Scanning...
+                  </>
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" /> Find My Photos
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
